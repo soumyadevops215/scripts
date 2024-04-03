@@ -1,0 +1,29 @@
+---
+- name: tasks
+  hosts: demo
+  user: ansible
+  become: yes
+  connection: ssh
+  tasks:
+    - name: update system
+      command: sudo yum update -y
+    - name: check for docker service
+      command: systemctl is-active docker
+      register: docker_service_status
+      ignore_errors: true
+    - name: install docker
+      command: yum install docker -y
+    - name: check docker version
+      command: docker --version
+    - name: pull nginx image
+      command: docker pull nginx
+    - name: run container
+      command: docker run -it -d nginx
+    - name: snapshot of container
+      shell: docker commit d39585a12444 soumyadevops215/demo 
+    - name: push into docker hub
+      command: docker push soumyadevops215/demo
+    - name: print successfully
+      debug:
+        msg:
+          "operation succesfull"
